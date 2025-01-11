@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239963763577",
+    "project_id": "greenscape-2e3e0",
+    "storage_bucket": "greenscape-2e3e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239963763577:android:f843865ad7f69b39bb75a8",
+        "android_client_info": {
+          "package_name": "com.example.green_scape_new"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWZQ_pI2_H5s-F5rHCQaXuI3EM7GWCXWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
