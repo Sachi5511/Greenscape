@@ -6,7 +6,7 @@ import 'package:green_scape_new/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(); 
   runApp(const MyApp());
 }
 

@@ -1,13 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_screen.dart'; // Ensure you have this file and the HomeScreen implemented
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+
+  final _nameController = TextEditingController();
+  final _contactController = TextEditingController();
+  final _nicController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  void _registerUser() async {
+    final name = _nameController.text.trim();
+    final contact = _contactController.text.trim();
+    final nic = _nicController.text.trim();
+    final address = _addressController.text.trim();
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    try {
+      // Create a new user
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: username,
+        password: password,
+      );
+
+      // Add user details to Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'name': name,
+        'contact': contact,
+        'nic': nic,
+        'address': address,
+        'email': username,
+        'createdAt': DateTime.now(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful')),
+      );
+
+      // Navigate to HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'An error occurred')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _contactController.dispose();
+    _nicController.dispose();
+    _addressController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.green[50], // Set the background color to light green
+      backgroundColor: Colors.green[50],
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: const Text('Register'),
@@ -17,140 +96,49 @@ class RegisterPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40.0), // Add some space at the top
-                Icon(
-                  Icons.person_add,
-                  size: 100.0,
-                  color: Colors.green[700],
-                ),
-                const SizedBox(height: 20.0),
-                Text(
-                  'Create your new account',
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[800], // Dark green text color
-                    letterSpacing: 1.2,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                const SizedBox(height: 40.0),
+                Icon(Icons.person_add, size: 100.0, color: Colors.green[700]),
                 const SizedBox(height: 20.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Name',
-                    prefixIcon: Icon(Icons.person, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _nameController,
+                  decoration: _inputDecoration('Name', Icons.person),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Contact',
-                    prefixIcon: Icon(Icons.phone, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _contactController,
+                  decoration: _inputDecoration('Contact', Icons.phone),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'NIC',
-                    prefixIcon: Icon(Icons.badge, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _nicController,
+                  decoration: _inputDecoration('NIC', Icons.badge),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Personal Address',
-                    prefixIcon: Icon(Icons.home, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _addressController,
+                  decoration: _inputDecoration('Personal Address', Icons.home),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'User Name',
-                    prefixIcon:
-                        Icon(Icons.person_outline, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _usernameController,
+                  decoration: _inputDecoration('Email', Icons.email),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Password',
-                    prefixIcon: Icon(Icons.lock, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _passwordController,
                   obscureText: true,
+                  decoration: _inputDecoration('Password', Icons.lock),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Re-enter Password',
-                    prefixIcon:
-                        Icon(Icons.lock_outline, color: Colors.green[700]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 20.0),
-                  ),
+                  controller: _confirmPasswordController,
                   obscureText: true,
+                  decoration: _inputDecoration('Re-enter Password', Icons.lock),
                 ),
                 const SizedBox(height: 20.0),
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement sign-up functionality here
-                  },
+                  onPressed: _registerUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     padding: const EdgeInsets.symmetric(
@@ -158,37 +146,29 @@ class RegisterPage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    textStyle: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                   child: const Text('Sign up'),
                 ),
-                const SizedBox(height: 20.0),
-                Text(
-                  'Already have an account? Log in',
-                  style: TextStyle(
-                    color: Colors.green[800], // Dark green text color
-                    fontSize: 16.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10.0),
-                Text(
-                  'By signing up, you agree to our Terms of Service and Privacy Policy.',
-                  style: TextStyle(
-                    color: Colors.green[800], // Dark green text color
-                    fontSize: 14.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40.0), // Add some space at the bottom
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint, IconData icon) {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.white,
+      hintText: hint,
+      prefixIcon: Icon(icon, color: Colors.green[700]),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
     );
   }
 }
