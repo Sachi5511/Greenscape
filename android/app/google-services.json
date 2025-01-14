@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "195423621749",
-    "project_id": "greenspace-6701c",
-    "storage_bucket": "greenspace-6701c.firebasestorage.app"
+    "project_number": "1059878313766",
+    "project_id": "greenspace-77826",
+    "storage_bucket": "greenspace-77826.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:195423621749:android:679caa1ae7ee22232cde3c",
+        "mobilesdk_app_id": "1:1059878313766:android:d3fee6bff2575eb6b6ebe7",
         "android_client_info": {
           "package_name": "com.example.green_scape_new"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1059878313766-m8153c5o9h8a8ds83hh15lj80la7m7bj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyD2BVVDBuBwkrCAAxfhRp5GZ9vGTcLeJAU"
+          "current_key": "AIzaSyCvs1jqt74f5KvZtAkV9kSTXZVttnJUOFY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059878313766-m8153c5o9h8a8ds83hh15lj80la7m7bj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
